@@ -26,7 +26,7 @@ import pytest
 
 # To run our slow tests only in our CIs
 CI = os.environ.get('CI', None) is not None
-RUN_SLOW = os.environ.get('RUN_SLOW', None) == 'true'
+RUN_SLOW = os.environ.get('RUN_SLOW', None) == 'slow'
 
 
 def main(run_slow=False, extra_args=None):
@@ -40,7 +40,8 @@ def main(run_slow=False, extra_args=None):
 
     if CI:
         # Exit on first failure and show coverage
-        pytest_args += ['-x', '--cov=spyder', '--no-cov-on-fail']
+        # pytest_args += ['-x', '--cov=spyder', '--no-cov-on-fail']
+        pytest_args += ['--cov=spyder', '--no-cov-on-fail']
 
         # Run slow tests only
         if RUN_SLOW:

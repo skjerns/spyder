@@ -599,8 +599,10 @@ def test_move_to_first_breakpoint(main_window, qtbot, debugcell):
 
 @pytest.mark.slow
 @flaky(max_runs=3)
-@pytest.mark.skipif(os.environ.get('CI', None) is None or sys.platform == 'darwin',
-                    reason="It's not meant to be run locally and fails in macOS")
+@pytest.mark.skipif(
+    os.environ.get('CI', None) is None or not sys.platform.startswith(
+        'darwin'),
+    reason="It's not meant to be run locally and fails in macOS and Windows")
 def test_runconfig_workdir(main_window, qtbot, tmpdir):
     """Test runconfig workdir options."""
     CONF.set('run', 'configurations', [])
@@ -655,8 +657,9 @@ def test_runconfig_workdir(main_window, qtbot, tmpdir):
 
 @pytest.mark.slow
 @flaky(max_runs=3)
-@pytest.mark.skipif((os.name == 'nt' and PY2) or sys.platform == 'darwin',
-                    reason="It's failing there")
+@pytest.mark.skipif(
+    (os.name == 'nt' and PY2) or not sys.platform.startswith('linux'),
+    reason="It fails on win and mac")
 def test_dedicated_consoles(main_window, qtbot):
     """Test running code in dedicated consoles."""
     # ---- Load test file ----

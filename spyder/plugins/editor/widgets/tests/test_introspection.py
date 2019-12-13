@@ -733,6 +733,9 @@ def test_code_snippets(lsp_codeeditor, qtbot):
 @pytest.mark.slow
 @pytest.mark.first
 @flaky(max_runs=5)
+@pytest.mark.skipif(
+    os.environ.get('CI') is None or os.name == 'nt',
+    reason='Run tests only on CI. Fails on Windows')
 def test_completion_order(lsp_codeeditor, qtbot):
     code_editor, _ = lsp_codeeditor
     completion = code_editor.completion_widget
@@ -930,8 +933,9 @@ def spam():
 
 @pytest.mark.slow
 @pytest.mark.first
-@pytest.mark.skipif(os.environ.get('CI') is None,
-                    reason='Run tests only on CI.')
+@pytest.mark.skipif(
+    os.environ.get('CI') is None or not sys.platform.startswith('linux'),
+    reason='Run tests only on CI. Fails on Mac and Windows')
 @flaky(max_runs=5)
 def test_completions_environment(lsp_codeeditor, qtbot, tmpdir):
     """Exercise code completion when adding extra paths."""

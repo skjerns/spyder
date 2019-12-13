@@ -1,0 +1,89 @@
+name: Run Linux tests
+
+on:
+  # This avoids having duplicate builds for a pull request
+  push:
+    branches:
+    - master
+    - 5.x
+    - 4.x
+  pull_request:
+    branches:
+    - master
+    - 5.x
+    - 4.x
+
+jobs:
+  build:
+    name: (Conda:${{ matrix.USE_CONDA }}, Py${{ matrix.PYTHON_VERSION }}, ${{ matrix.RUN_SLOW }})
+    runs-on: ubuntu-latest
+    env:
+      CI: True
+      CODECOV_TOKEN: "56731c25-9b1f-4340-8b58-35739bfbc52d"
+      PYTHON_VERSION: ${{ matrix.PYTHON_VERSION }}
+      RUN_SLOW: ${{ matrix.RUN_SLOW }}
+      USE_CONDA: ${{ matrix.USE_CONDA }}
+    strategy:
+      fail-fast: false 
+      matrix:
+        USE_CONDA: ['yes']
+        PYTHON_VERSION: ['3.7']
+        RUN_SLOW: ['slow', 'fast']
+    steps:
+      - name: Install dependencies
+        shell: bash
+        run: |
+          sudo apt-get install libegl1-mesa libxcb-randr0-dev libxcb-xtest0-dev libxcb-xinerama0-dev libxcb-shape0-dev libxcb-xkb-dev
+      - name: Checkout branch
+        uses: actions/checkout@v1.2.0
+      - name: Cache pip
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install Conda
+        shell: bash
+        run: |
+          wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh
+          bash ~/miniconda.sh -b -p ~/miniconda
+          rm ~/miniconda.sh
+          echo "::add-path::~/miniconda/condabin"
+          echo "::add-path::~/miniconda/bin"
+      - name: Set up Conda
+        shell: bash
+        run: |
+          eval "$(conda shell.bash hook)" && conda activate base
+          conda config --set always_yes yes --set changeps1 no
+          conda config --add pkgs_dirs ~/.cache/conda/
+          conda install conda=4.7 -q
+      - name: Conda info
+        shell: bash
+        run: |
+          eval "$(conda shell.bash hook)" && conda activate base
+          conda info
+          conda list          
+      - name: Create test environment
+        shell: bash
+        run: |
+          eval "$(conda shell.bash hook)" && conda activate base
+          conda create -n test "python=$PYTHON_VERSION"
+          eval "$(conda shell.bash hook)" && conda activate test
+          xvfb-run --auto-servernum ./continuous_integration/github/install.sh
+      - name: Show test environment
+        shell: bash
+        run: |
+          eval "$(conda shell.bash hook)" && conda activate base && conda activate test
+          conda info
+          conda list
+      - name: Run tests
+        shell: bash
+        run: |
+          eval "$(conda shell.bash hook)" && conda activate base && conda activate test
+          xvfb-run --auto-servernum ./continuous_integration/github/runtests.sh
+      - name: Coverage
+        shell: bash
+        run: |
+          eval "$(conda shell.bash hook)" && conda activate base && conda activate test
+          codecov

@@ -3,7 +3,7 @@
 # -- Installl dependencies
 if [ "$USE_CONDA" = "yes" ]; then
     # Avoid problems with invalid SSL certificates
-    if [ "$PYTHON_VERSION" = "2.7" ]; then
+    if [ "$PYTHON_VERSION" = "2.7" ] && [ `uname` = "Darwin" ]; then
         conda install -q -y python=2.7.16=h97142e2_0
     fi
 
@@ -52,3 +52,6 @@ fi
 
 # Create environment for Jedi environments testsTest for Jedi environments
 conda create -n jedi-test-env -q -y python=3.6 loghub spyder-kernels -c spyder-ide
+
+# Install codecov
+pip install codecov

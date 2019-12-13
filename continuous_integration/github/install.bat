@@ -6,18 +6,18 @@ if %USE_CONDA% == yes (
         conda install -q -y python=3.6.8=h9f7ef89_7
     )
 
-    conda install -q -y -c spyder-ide --file requirements/conda.txt
+    conda install -n test -q -y -c spyder-ide --file requirements/conda.txt
     if errorlevel 1 exit 1
 
-    conda install -q -y -c spyder-ide --file requirements/tests.txt
+    conda install -n test -q -y -c spyder-ide --file requirements/tests.txt
     if errorlevel 1 exit 1
 
     :: Github backend tests are failing with 1.1.1d
-    conda install -q -y openssl=1.1.1c
+    conda install -n test -q -y openssl=1.1.1c
     if errorlevel 1 exit 1
 ) else (
     :: Github backend tests are failing with 1.1.1d
-    conda install -q -y openssl=1.1.1c
+    conda install -n test -q -y openssl=1.1.1c
     if errorlevel 1 exit 1
 
     :: Install Spyder and its dependencies from our setup.py

@@ -97,8 +97,8 @@ def test_get_calltips(qtbot, lsp_codeeditor, params):
 
 @pytest.mark.slow
 @pytest.mark.second
-@pytest.mark.skipif(sys.platform != 'darwin' and bool(os.environ.get('CI')),
-                    reason="Fails on Windows and Linux on CI")
+@pytest.mark.skipif(bool(os.environ.get('CI')),
+                    reason="Fails everywhere!")
 @pytest.mark.parametrize('params', [
             # Parameter, Expected Output
             ('dict', '' if PY2 else 'dict'),

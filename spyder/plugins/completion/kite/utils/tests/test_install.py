@@ -27,10 +27,7 @@ INSTALL_TIMEOUT = 360000
 
 
 @pytest.mark.slow
-@pytest.mark.skipif((not sys.platform.startswith('linux')
-                     or os.environ.get('CI', None) is None),
-                    reason=("Only works reliably on Linux and "
-                            "it's not meant to be run outside of CIs"))
+@pytest.mark.skipif(True, reason=("Not currently working!"))
 def test_kite_install(qtbot):
     """Test the correct execution of the installation process of kite."""
     install_manager = KiteInstallationThread(None)

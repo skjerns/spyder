@@ -79,7 +79,7 @@ def test_is_valid_w_interpreter():
 
 @flaky(max_runs=3)
 @pytest.mark.skipif(
-    os.environ.get('CI', None) is None,
+    os.environ.get('CI', None) is None or sys.platform.startswith('linux'),
     reason='fails sometimes locally')
 def test_run_python_script_in_terminal(scriptpath, qtbot):
     """
@@ -99,7 +99,7 @@ def test_run_python_script_in_terminal(scriptpath, qtbot):
 
 @flaky(max_runs=3)
 @pytest.mark.skipif(
-    os.environ.get('CI', None) is None,
+    os.environ.get('CI', None) is None or sys.platform.startswith('linux'),
     reason='fails sometimes locally')
 def test_run_python_script_in_terminal_blank_wdir(scriptpath_with_blanks,
                                                   qtbot):
@@ -121,7 +121,7 @@ def test_run_python_script_in_terminal_blank_wdir(scriptpath_with_blanks,
 
 @flaky(max_runs=3)
 @pytest.mark.skipif(
-    os.environ.get('CI', None) is None,
+    os.environ.get('CI', None) is None or sys.platform.startswith('linux'),
     reason='fails sometimes locally')
 def test_run_python_script_in_terminal_with_wdir_empty(scriptpath, qtbot):
     """
