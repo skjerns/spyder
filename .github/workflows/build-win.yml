@@ -47,13 +47,8 @@ jobs:
            conda-version: 4.7
            auto-activate-base: true
            python-version: ${{ matrix.PYTHON_VERSION }} 
-      - name: Conda info
-        shell: pwsh
-        run: |
-          conda info
-          conda list
       - name: Create test environment
-        shell: pwsh
+        shell: cmd /C call {0}
         run: |
           continuous_integration\github\install.bat
       - name: Show test environment
@@ -62,7 +57,7 @@ jobs:
           conda info
           conda list
       - name: Run tests
-        shell: pwsh
+        shell: cmd /C call {0}
         run: |
           continuous_integration\github\runtests.bat
       - name: Coverage
