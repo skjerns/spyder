@@ -20,8 +20,6 @@ jobs:
     env:
       CI: True
       CODECOV_TOKEN: "56731c25-9b1f-4340-8b58-35739bfbc52d"
-      CONDA_EXE: "C:\\Miniconda\\condabin\\conda.bat"
-      PYTHON: "C:\\Miniconda"
       PYTHON_VERSION: ${{ matrix.PYTHON_VERSION }}
       RUN_SLOW: ${{ matrix.RUN_SLOW }}
       USE_CONDA: ${{ matrix.USE_CONDA }}
@@ -41,45 +39,33 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-      - name: Add Conda to PATH
-        shell: python
-        run: |
-          print("::add-path::{}".format("C:\\Miniconda\\condabin"))
-          print("::add-path::{}".format("C:\\Miniconda\\Scripts"))
-      - name: Set up Conda
-        shell: cmd
-        run: >-
-          conda config --set always_yes yes --set changeps1 no &&
-          conda config --add pkgs_dirs ~\AppData\Local\conda\Cache &&
-          conda install conda=4.7 -q
+      - name: Install Conda
+        uses: goanpeca/setup-miniconda@v1
+        with:
+           activate-environment: test
+           auto-update-conda: false
+           conda-version: 4.7
+           auto-activate-base: true
+           python-version: ${{ matrix.PYTHON_VERSION }} 
       - name: Conda info
-        shell: cmd
-        run: >-
-          "%CONDA_EXE%" activate base &&
-          conda info &&
-          conda list &&
+        shell: pwsh
+        run: |
+          conda info
+          conda list
       - name: Create test environment
-        shell: cmd
-        run: >-
-          "%CONDA_EXE%" activate base &&
-          conda create -n test python=%PYTHON_VERSION% &&
-          "%CONDA_EXE%" activate test &&
-          continuous_integration\github\install.bat &&
+        shell: pwsh
+        run: |
+          continuous_integration\github\install.bat
       - name: Show test environment
-        shell: cmd
-        run: >-
-          "%CONDA_EXE%" activate test &&
-          conda info &&
-          conda list &&
+        shell: pwsh
+        run: |
+          conda info
+          conda list
       - name: Run tests
-        shell: cmd
-        run: >-
-          "%CONDA_EXE%" activate test &&
-          where python &&
-          where pip &&
+        shell: pwsh
+        run: |
           continuous_integration\github\runtests.bat
       - name: Coverage
-        shell: cmd
-        run: >-
-          "%CONDA_EXE%" activate test &&
+        shell: pwsh
+        run: |
           codecov
