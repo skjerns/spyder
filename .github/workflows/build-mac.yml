@@ -48,7 +48,7 @@ jobs:
       - name: Create test environment
         shell: bash -l {0}
         run: |
-          xvfb-run --auto-servernum ./continuous_integration/github/install.sh
+          ./continuous_integration/github/install.sh
       - name: Show test environment
         shell: bash -l {0}
         run: |
@@ -57,7 +57,7 @@ jobs:
       - name: Run tests
         shell: bash -l {0}
         run: |
-          xvfb-run --auto-servernum ./continuous_integration/github/runtests.sh
+          ./continuous_integration/github/runtests.sh
       - name: Coverage
         shell: bash - {0}
         run: |
