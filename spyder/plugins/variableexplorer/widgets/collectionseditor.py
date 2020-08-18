@@ -66,6 +66,13 @@ MAX_SERIALIZED_LENGHT = 1e6
 LARGE_NROWS = 100
 ROWS_TO_LOAD = 50
 
+def natsort(s):
+    """
+    natural sorting, e.g. test3 comes before test100
+    taken from https://stackoverflow.com/a/16090640/3110740
+    """
+    return [int(t) if t.isdigit() else t.lower() for t in re.split('([0-9]+)', s)]
+
 
 class ProxyObject(object):
     """Dictionary proxy to an unknown object."""
@@ -171,7 +178,7 @@ class ReadOnlyCollectionsModel(QAbstractTableModel):
             self.keys = list(range(len(data)))
             self.title += _("List")
         elif isinstance(data, set):
-            self.keys = list(range(len(data)))
+            self.keys = sorted(list(data.keys()), key=natsort)
             self.title += _("Set")
             self._data = list(data)
         elif isinstance(data, dict):
